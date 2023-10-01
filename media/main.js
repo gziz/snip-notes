@@ -1,0 +1,255 @@
+(function() {
+    const vscode = acquireVsCodeApi();
+
+    window.addEventListener('message', handleMessage);
+    document.querySelector('.note-search-bar').addEventListener('keyup', handleSearch);
+    document.addEventListener('contextmenu', handleRightClick);
+
+    vscode.postMessage({ type: 'refreshNotes' });
+
+    function handleMessage(event) {
+        const message = event.data;
+        switch (message.type) {
+            case 'refreshNotes':
+                refreshNotes(message.notes);
+                break;
+            case 'focusOnNote':
+                const noteId = message.noteId;
+                focusOnNote(noteId);
+        }
+    }
+
+    function handleSearch(event) {
+        const searchTerm = event.target.value.toLowerCase();
+        filterNotesByTerm(searchTerm);
+    }
+
+    function handleRightClick(event) {
+        let target = getClosestElement(event.target, '.note-container');
+        if (target) {
+            const noteId = parseInt(target.getAttribute('id').split('-')[1]);
+            vscode.postMessage({
+                type: 'rightClickedNote',
+                noteId: noteId
+            });
+        }
+    }
+
+    function getClosestElement(elem, selector) {
+        for (; elem && elem !== document; elem = elem.parentElement) {
+            if (elem.matches(selector)) return elem;
+        }
+        return null;
+    }
+
+    function focusOnNote(noteId) {
+        const noteToFocus = document.getElementById(`note-${noteId}`);
+        if (noteToFocus) {
+            noteToFocus.scrollIntoView({
+                behavior: 'smooth',
+                block: 'center'
+            });
+        }
+    }
+    function refreshNotes(notes) {
+        const notesDiv = document.querySelector('.notes-div');
+        notesDiv.textContent = '';
+
+        notes.sort((a, b) => a.startLine - b.startLine);
+
+        for (const note of notes) {
+            const noteContainer = createNoteContainer(note);
+            notesDiv.appendChild(noteContainer);
+
+        }
+        const searchTerm = document.querySelector('.note-search-bar').value.toLowerCase();
+        filterNotesByTerm(searchTerm);
+    }
+
+    const emojiMap = {
+        note: "💡",
+        todo: "✅",
+        fix: "🔧"
+    };
+
+    function createNoteHeader(note) {
+        const headerWrapper = document.createElement('div');
+        headerWrapper.classList.add('header-wrapper');
+    
+        // Get the emoji based on the note's category
+        const emoji = document.createElement('span');
+        emoji.classList.add('note-emoji');
+        emoji.textContent = emojiMap[note.category] || "💡";
+        headerWrapper.appendChild(emoji);
+    
+        // Create title div
+        const headerContent = document.createElement('div');
+        headerContent.innerHTML = note.title;
+        headerContent.classList.add('header-content');
+        headerContent.setAttribute('contenteditable', 'true');
+
+        // Make the title editable
+        headerContent.addEventListener('paste', (e) => handlePaste(e, headerContent));
+        headerContent.addEventListener('blur', () => updateNoteTitle(note, headerContent.innerHTML));
+        headerContent.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                headerContent.blur();
+            }
+        });
+        
+        headerWrapper.appendChild(headerContent);
+        
+        const optionsIcon = document.createElement('span');
+        optionsIcon.innerHTML = '⋮';
+        optionsIcon.classList.add('header-options-icon');
+        optionsIcon.setAttribute('data-vscode-context', '{"preventDefaultContextMenuItems": true }');
+        optionsIcon.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.target.dispatchEvent(new MouseEvent('contextmenu', { bubbles: true, clientX: e.clientX, clientY: e.clientY }));
+            e.stopPropagation();
+        });
+
+        headerWrapper.appendChild(optionsIcon);
+
+        return headerWrapper;
+    }
+
+    function createNoteContent(note) {
+        const noteContent = document.createElement('div');
+        noteContent.innerHTML = note.noteText;
+        noteContent.classList.add('note-content');
+        noteContent.setAttribute('contenteditable', 'true');
+        
+        noteContent.addEventListener('paste', (e) => handlePaste(e, noteContent));
+        noteContent.addEventListener('blur', () => updateNoteContent(note, noteContent.innerHTML));
+        noteContent.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                noteContent.blur();
+            }
+        });
+
+        return noteContent;
+    }
+
+    function createCodeContent(note) {
+        const codeContainer = document.createElement('div');
+        codeContainer.classList.add('code-container');
+    
+        codeContainer.appendChild(createLineNumbersDiv(note.startLine, note.endLine));
+
+        const codeElement = document.createElement('code');
+        codeElement.classList.add(`language-${note.languageId}`);
+        codeElement.textContent = normalizeCodeIndentation(note.codeText);
+        Prism.highlightElement(codeElement);
+
+        const codePre = document.createElement('pre');
+        codePre.appendChild(codeElement);
+        codePre.classList.add('code-content');
+
+        codeContainer.appendChild(codePre);
+        return codeContainer;
+    }
+
+    function createLineNumbersDiv(startLine, endLine) {
+        const lineNumbersPre = document.createElement('pre');
+        lineNumbersPre.classList.add('line-numbers');
+    
+        const lineNumbersCode = document.createElement('code');
+        let lineNumbersText = "";
+        for(let i = startLine; i <= endLine; i++) {
+            lineNumbersText += (i+1) + "\n"; // api returns 0-indexed
+        }
+        lineNumbersCode.textContent = lineNumbersText.trim();
+        Prism.highlightElement(lineNumbersCode);
+        lineNumbersPre.appendChild(lineNumbersCode);
+        return lineNumbersPre;
+    }
+
+    function createNoteContainer(note) {
+        const noteContainer = document.createElement('div');
+        noteContainer.classList.add('note-container');
+        noteContainer.id = `note-${note.id}`;
+        noteContainer.setAttribute('data-vscode-context', '{"webviewSection": "noteContainer", "preventDefaultContextMenuItems": true}');
+        
+        noteContainer.addEventListener('click', (event) => onNoteClick(note, event));
+
+        noteContainer.appendChild(createNoteHeader(note));
+        noteContainer.appendChild(createNoteContent(note));
+        noteContainer.appendChild(createCodeContent(note));
+
+        return noteContainer;
+    }
+
+    function onNoteClick(note, event) {
+        if (event.target.nodeName.toLowerCase() === 'code'){
+            vscode.postMessage({ type: 'noteClicked', value: note.startLine });
+        }
+    }
+
+    function updateNoteContent(note, newContent) {
+        if (newContent !== note.noteText) {
+            note.noteText = newContent;
+            vscode.postMessage({ type: 'noteUpdated', updatedNote: note });
+        }
+    }
+
+    function updateNoteTitle(note, newTitle) {
+        if (newTitle !== note.title) {
+            note.title = newTitle;
+            vscode.postMessage({ type: 'noteUpdated', updatedNote: note });
+        }
+    }
+
+    function filterNotesByTerm(term) {
+        const notesContainers = document.querySelectorAll('.note-container');
+    
+        for (const container of notesContainers) {
+            const noteContent = container.querySelector('.note-content').textContent.toLowerCase();
+            const codeContent = container.querySelector('.code-content').textContent.toLowerCase();
+
+            if (noteContent.includes(term) || codeContent.includes(term)) {
+                container.style.display = ''; // show
+            } else {
+                container.style.display = 'none'; // hide
+            }
+        }
+    }
+
+    function normalizeCodeIndentation(code) {
+        const lines = code.split('\n');
+        const linesWithCode = lines.filter(line => line.trim() !== '');
+        if (linesWithCode.length === 0) return code;
+
+        const minIndent = Math.min(
+            ...linesWithCode.map(line => line.search(/\S/))
+        );
+
+        return lines.map(line => line.substring(minIndent)).join('\n');
+    }
+
+    function handlePaste(event, targetElement) {
+        event.preventDefault();
+    
+        const text = (event.originalEvent || event).clipboardData.getData('text/plain');
+    
+        // Insert text manually
+        const selection = window.getSelection();
+        if (selection.rangeCount) {
+            const range = selection.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(document.createTextNode(text));
+            
+            // Move the caret to the end of the inserted text
+            range.collapse(false);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        } else {
+            // If there's no selection, simply append the text at the end
+            targetElement.textContent += text;
+        }
+    }
+    
+})();

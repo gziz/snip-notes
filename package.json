@@ -1,0 +1,128 @@
+{
+  "name": "snip-notes-ts",
+  "displayName": "snip-notes-ts",
+  "description": "Create notes tied directly to their code snippets.",
+  "publisher": "gziz",
+  "repository": "https://github.com/gziz/snip-notes.git",
+  "homepage": "https://snip-notes.gerardomz.com/",
+  "icon": "resources/snip-notes.png",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.82.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "snipNotes",
+          "title": "Snip Notes TS",
+          "icon": "resources/icons/snip-notes.svg"
+        }
+      ]
+    },
+    "views": {
+      "snipNotes": [
+        {
+          "type": "webview",
+          "id": "snipNotes.webView",
+          "name": "Notes TS"
+        },
+        {
+          "id": "snipNotes.treeView",
+          "name": "Tree Notes TS"
+        }
+      ]
+    },
+    "menus": {
+      "webview/context": [
+        {
+          "command": "snip-notes.deleteNote",
+          "when": "webviewId == 'snipNotes.webView' && webviewSection == 'noteContainer'",
+          "group": "noteCRUD"
+        },
+        {
+          "command": "snip-notes.updateNoteCategoryToNote",
+          "when": "webviewId == 'snipNotes.webView' && webviewSection == 'noteContainer'",
+          "group": "noteCategories"
+        },
+        {
+          "command": "snip-notes.updateNoteCategoryToTodo",
+          "when": "webviewId == 'snipNotes.webView' && webviewSection == 'noteContainer'",
+          "group": "noteCategories"
+        },
+        {
+          "command": "snip-notes.updateNoteCategoryToFix",
+          "when": "webviewId == 'snipNotes.webView' && webviewSection == 'noteContainer'",
+          "group": "noteCategories"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "snip-notes.deleteNote",
+          "when": "false"
+        },
+        {
+          "command": "snip-notes.refreshNotes",
+          "when": "false"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "snip-notes.createNote",
+        "title": "Snip Notes: Create Note"
+      },
+      {
+        "command": "snip-notes.deleteNote",
+        "title": "Delete Note"
+      },
+      {
+        "command": "snip-notes.refreshNotes",
+        "title": "Refresh Notes"
+      },
+      {
+        "command": "snip-notes.updateNoteCategoryToNote",
+        "title": "Set as Note 💡"
+      },
+      {
+        "command": "snip-notes.updateNoteCategoryToTodo",
+        "title": "Set as TO-DO ✅"
+      },
+      {
+        "command": "snip-notes.updateNoteCategoryToFix",
+        "title": "Set as Fix Me 🔧"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "@types/node": "16.x",
+    "@types/sql.js": "^1.4.5",
+    "@types/vscode": "^1.82.0",
+    "@typescript-eslint/eslint-plugin": "^6.4.1",
+    "@typescript-eslint/parser": "^6.4.1",
+    "@vscode/test-electron": "^2.3.4",
+    "eslint": "^8.47.0",
+    "glob": "^10.3.3",
+    "mocha": "^10.2.0",
+    "typescript": "^5.1.6"
+  },
+  "dependencies": {
+    "sql.js": "^1.8.0"
+  }
+}

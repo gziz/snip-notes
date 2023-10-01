@@ -1,0 +1,99 @@
+/* Overall Styling */
+body {
+    margin-bottom: 200px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+        Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+}
+
+/* Note Container Styling */
+.note-container {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+    margin-bottom: 15px;
+}
+
+.note-content:focus, .header-content:focus, .note-search-bar:focus {
+    outline-color: #0e639c;
+}
+
+.header-wrapper {
+    display: flex;
+    align-items: center;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 5px;
+    /* color: #9CDCFE; */
+    margin: 0 0 10px 0;
+    font-size: 1.17em; 
+    font-weight: bold;
+}
+
+.note-emoji {
+    padding-right: 5px;
+}
+.header-content {
+    flex: 1;
+    padding: 5px;
+}
+
+.note-search-bar {
+    box-sizing: border-box;
+    padding: 6px;
+    width: 100%;
+    border-radius: 1px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.9);
+    background-color: transparent;
+    margin: 15px 0 15px 0;
+}
+
+.note-content {
+    width: 100%;
+}
+
+.note-content, .code-content, .line-numbers {
+    background-color: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 5px 0;
+    overflow-x: auto;
+    white-space: pre-wrap;
+}
+
+.note-content {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    min-height: 30px;
+    overflow: auto;
+    word-wrap: break-word;
+}
+
+.code-container {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border: none;
+    width: 100%;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.code-content, .line-numbers {
+    font-family: 'Courier New', Courier, monospace;
+    margin-bottom: 5px;
+    padding: 0;
+    overflow: visible; 
+}
+
+.code-content {
+    padding-left: 10px; /* Gap between line numbers and code */
+}
+.line-numbers {
+    padding-right: 10px; /* Gap between line numbers and code */
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    user-select: none;
+}
+
+.header-options-icon {
+    cursor: pointer;
+    padding-left: 10px;
+    font-size: 1.2em; /* Adjust size as needed */
+}

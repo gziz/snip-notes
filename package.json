@@ -3,7 +3,7 @@
   "displayName": "snip-notes-ts",
   "description": "Create notes tied directly to their code snippets.",
   "publisher": "gziz",
-  "repository": "https://github.com/gziz/snip-notes.git",
+  "repository": "https://github.com/gziz/snip-notes-ts.git",
   "homepage": "https://snip-notes.gerardomz.com/",
   "icon": "resources/snip-notes.png",
   "version": "0.0.1",

@@ -1,12 +1,12 @@
 {
-  "name": "snip-notes-ts",
-  "displayName": "snip-notes-ts",
+  "name": "snip-notes",
+  "displayName": "Snip Notes",
   "description": "Create notes tied directly to their code snippets.",
   "publisher": "gziz",
   "repository": "https://github.com/gziz/snip-notes-ts.git",
   "homepage": "https://snip-notes.gerardomz.com/",
   "icon": "resources/snip-notes.png",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.82.0"
   },

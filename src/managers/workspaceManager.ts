@@ -33,7 +33,7 @@ class WorkspaceManager {
     let workspaceId = dbService.getWorkspaceIdByName(workspaceName);
     let workspacePathFromDb = dbService.getWorkspacePathByName(workspaceName);
     if (workspacePathFromDb && workspacePathFromDb !== workspacePath) {
-      vscode.window.showInformationMessage(infoMessages.diffWorkspacePath(workspaceName));
+      infoMessages.diffWorkspacePath(workspaceName);
     }
     
     if (!workspaceId) {

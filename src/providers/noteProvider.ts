@@ -1,6 +1,8 @@
 import * as vscode from 'vscode';
 import file from '../managers/fileManager';
 import notes from '../managers/noteManager';
+import { Note } from '../types';
+import InfoMessages from '../utils/infoMessages';
 
 export default class NotesProvider {
 
@@ -30,7 +32,7 @@ export default class NotesProvider {
         webviewView.webview.onDidReceiveMessage(message => {
             switch (message.type) {
                 case "noteClicked": 
-                    this.handleNoteClicked(message.value);
+                    this.handleNoteClicked(message.note);
                     break;
                 case "refreshNotes":
                     this.refreshNotes();
@@ -45,13 +47,22 @@ export default class NotesProvider {
         });
     }
 
-    handleNoteClicked(lineNumber: number): void {
-        if (lineNumber != null) {
+    handleNoteClicked(note: Note): void {
+        if (note != null) {
             let editor = vscode.window.activeTextEditor;
             if (editor) {
-                let targetLine = new vscode.Position(lineNumber, 0);
-                editor.selection = new vscode.Selection(targetLine, targetLine);
-                editor.revealRange(new vscode.Range(targetLine, targetLine));
+                const noteFirstLine = note.codeText.split("\n")[0]
+
+                const positionStart = new vscode.Position(note.startLine, 0)
+                const positionEnd = new vscode.Position(note.startLine, noteFirstLine.length)
+                const codeRange = new vscode.Range(positionStart, positionEnd);
+                const editorFirstLine = editor.document.getText(codeRange);
+                if (noteFirstLine !== editorFirstLine) {
+                    InfoMessages.noteHasMoved();
+                } else {
+                const selection = new vscode.Selection(positionEnd, positionEnd);
+                vscode.window.showTextDocument(editor.document, { viewColumn: editor.viewColumn, selection: selection })
+                }
             }
         }
     }

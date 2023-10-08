@@ -1,6 +1,10 @@
+import * as vscode from 'vscode';
 class InfoMessages {
-    static diffWorkspacePath(workspaceName: string): string {
-        return `Snip Notes: Seems like you have worked on workspace: "${workspaceName}" but at a different path location. If it's a different workspace with the same name, be careful with notes conflicts!`;
+    static diffWorkspacePath(workspaceName: string) {
+        vscode.window.showInformationMessage(`Snip Notes: Seems like you have worked on workspace: "${workspaceName}" but at a different path location. If it's a different project/workspace with the same name, beware of note conflicts!`);
+    }
+    static noteHasMoved() {
+        vscode.window.showInformationMessage("Snip Notes: Seems like the code for this note has been moved!");
     }
 }
 

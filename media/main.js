@@ -183,8 +183,9 @@
     }
 
     function onNoteClick(note, event) {
-        if (event.target.nodeName.toLowerCase() === 'code'){
-            vscode.postMessage({ type: 'noteClicked', value: note.startLine });
+        let target = getClosestElement(event.target, '.code-container');
+        if (target) {
+            vscode.postMessage({ type: 'noteClicked', note: note, });
         }
     }
 

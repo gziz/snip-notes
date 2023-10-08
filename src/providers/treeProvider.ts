@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import dbService from '../db/databaseService';
 import workspace from '../managers/workspaceManager';
-import fileManager from '../managers/fileManager';
 import icons from '../utils/icons';
 
 class NoteTreeItem extends vscode.TreeItem {

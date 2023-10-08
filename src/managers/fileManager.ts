@@ -54,7 +54,7 @@ class FileManager {
     if (editor) {
       const workspaceId = workspace.getWorkspaceId();
       if (!workspaceId) return;
-      const relativeFilePath = vscode.workspace.asRelativePath(editor.document.uri);
+      const relativeFilePath = vscode.workspace.asRelativePath(editor.document.fileName);
       const fileId = dbService.getFileIdByPath(relativeFilePath, workspaceId, insertIfNotExists);
       this.updateFileID(fileId);
       this.updateFileRelativePath(relativeFilePath);

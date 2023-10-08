@@ -3,10 +3,10 @@
   "displayName": "Snip Notes",
   "description": "Create notes tied directly to their code snippets.",
   "publisher": "gziz",
-  "repository": "https://github.com/gziz/snip-notes-ts.git",
+  "repository": "https://github.com/gziz/snip-notes.git",
   "homepage": "https://snip-notes.gerardomz.com/",
   "icon": "resources/snip-notes.png",
-  "version": "0.0.3",
+  "version": "0.0.6",
   "engines": {
     "vscode": "^1.82.0"
   },
@@ -22,7 +22,7 @@
       "activitybar": [
         {
           "id": "snipNotes",
-          "title": "Snip Notes TS",
+          "title": "Snip Notes",
           "icon": "resources/icons/snip-notes.svg"
         }
       ]
@@ -32,11 +32,11 @@
         {
           "type": "webview",
           "id": "snipNotes.webView",
-          "name": "Notes TS"
+          "name": "Notes"
         },
         {
           "id": "snipNotes.treeView",
-          "name": "Tree Notes TS"
+          "name": "Tree Notes"
         }
       ]
     },

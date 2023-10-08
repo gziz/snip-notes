@@ -45,7 +45,7 @@ export  default class NoteTreeProvider implements vscode.TreeDataProvider<NoteTr
         return element;
     }
 
-    async getChildren(element?: NoteTreeItem): Promise<NoteTreeItem[]> {
+    async getChildren(element?: NoteTreeItem): Promise<NoteTreeItem[]|null> {
         if (element) {
             return element.children;
         } else {
@@ -53,10 +53,10 @@ export  default class NoteTreeProvider implements vscode.TreeDataProvider<NoteTr
         }
     }
 
-    async buildRoot(): Promise<NoteTreeItem[]> {
+    async buildRoot(): Promise<NoteTreeItem[]|null> {
         const workspaceId = workspace.getWorkspaceId();
         if (!workspaceId) {
-            return [new NoteTreeItem("None", null, vscode.TreeItemCollapsibleState.Collapsed, undefined, 'directory')];
+            return null;
         }
         const files = await dbService.getFilesFromWorkspaceId(workspaceId);
         const root = await this.buildHierarchy(files);

@@ -4,7 +4,7 @@ Enhance your coding experience by seamlessly integrating notes right within VSCo
 Just highlight a code segment, add your insights, and then view them organized in your sidebar.
 
 ## 🎥 Demo
-<img src="resources/gifs/snip-notes-demo.gif" text-align="center" width="1000" alt="Overall Demo">
+<img src="https://random-jerry.s3.amazonaws.com/snip-notes/create-note.gif" text-align="center" width="1000" alt="Overall Demo">
 
 ## 🌟 Features
 * Attach Notes to Code: Make personal annotations and jot down ideas, to-dos, or necessary fixes.
